@@ -1,17 +1,15 @@
 package com.khan.hospital_management.service;
 
-import com.khan.hospital_management.dto.AuthResponse;
-import com.khan.hospital_management.dto.DoctorRegisterRequest;
-import com.khan.hospital_management.dto.LoginRequest;
-import com.khan.hospital_management.dto.RegisterRequest;
+import com.khan.hospital_management.dto.*;
 import com.khan.hospital_management.model.Doctor;
+import com.khan.hospital_management.model.Role;
 import com.khan.hospital_management.model.User;
-import com.khan.hospital_management.repository.DoctorRepository;
 import com.khan.hospital_management.repository.UserRepository;
 import com.khan.hospital_management.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -19,10 +17,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private final DoctorRepository doctorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    @Transactional
     public AuthResponse registerDoctor(DoctorRegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("User already exists");
@@ -33,11 +31,9 @@ public class AuthenticationService {
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(Role.DOCTOR)
                 .createdAt(LocalDateTime.now())
                 .build();
-
-        userRepository.save(user);
 
         // create doctor profile
         Doctor doctor = Doctor.builder()
@@ -45,38 +41,54 @@ public class AuthenticationService {
                 .phone(request.getPhone())
                 .department(request.getDepartment())
                 .qualification(request.getQualification())
+                .user(user) // <-- THIS IS IMPORTANT
                 .build();
 
-        doctorRepository.save(doctor);
+        // link doctor to user
+        user.setDoctor(doctor);
 
-        // generate token
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
-    }
+        // save doctor
+        User savedUser = userRepository.save(user);
 
-    public AuthResponse register(RegisterRequest registerRequest) {
-        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new RuntimeException("User already exists");
-        }
+        String token = jwtService.generateToken(savedUser);
 
-        var user = User.builder()
-                .fullName(registerRequest.getFullName())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
+        UserDetailsDto userDetailsDto = UserDetailsDto.builder()
+                .email(savedUser.getEmail())
+                .fullName(savedUser.getFullName())
+                .role(savedUser.getRole())
                 .build();
-        userRepository.save(user);
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+
+        return AuthResponse.builder()
+                .token(token)
+                .message("Doctor registered successfully!")
+                .timestamp(LocalDateTime.now())
+                .userDetailsDto(userDetailsDto)
+                .build();
     }
 
-    public AuthResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
-        }
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
-    }
+//    public AuthResponse register(RegisterRequest registerRequest) {
+//        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+//            throw new RuntimeException("User already exists");
+//        }
+//
+//        var user = User.builder()
+//                .fullName(registerRequest.getFullName())
+//                .email(registerRequest.getEmail())
+//                .password(passwordEncoder.encode(registerRequest.getPassword()))
+//                .role(registerRequest.getRole())
+//                .build();
+//        userRepository.save(user);
+//        String token = jwtService.generateToken(user);
+//        return new AuthResponse(token);
+//    }
+//
+//    public AuthResponse login(LoginRequest loginRequest) {
+//        User user = userRepository.findByEmail(loginRequest.getEmail())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+//            throw new RuntimeException("Invalid credentials");
+//        }
+//        String token = jwtService.generateToken(user);
+//        return new AuthResponse(token);
+//    }
 }

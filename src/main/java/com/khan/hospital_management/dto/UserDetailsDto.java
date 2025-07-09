@@ -1,4 +1,4 @@
-package com.khan.hospital_management.dto.response;
+package com.khan.hospital_management.dto;
 
 import com.khan.hospital_management.model.Role;
 import lombok.Builder;

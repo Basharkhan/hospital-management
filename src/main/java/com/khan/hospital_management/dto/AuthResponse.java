@@ -1,13 +1,14 @@
 package com.khan.hospital_management.dto;
 
-import com.khan.hospital_management.dto.response.UserDetailsDto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class AuthResponse {
     private String token;
     private String message;
