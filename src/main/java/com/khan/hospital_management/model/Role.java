@@ -1,8 +1,15 @@
 package com.khan.hospital_management.model;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
     ADMIN,
     DOCTOR,
     PATIENT,
-    RECEPTIONIST
+    EMPLOYEE;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }
