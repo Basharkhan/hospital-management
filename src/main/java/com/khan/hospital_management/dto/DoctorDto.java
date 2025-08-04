@@ -1,12 +1,16 @@
 package com.khan.hospital_management.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class DoctorRequest {
+@Builder
+public class DoctorDto {
+    private Long id;
+    private String fullName;
+    private String email;
     private String specialization;
     private String phone;
     private String department;
     private String qualification;
-    private Long userId;
 }

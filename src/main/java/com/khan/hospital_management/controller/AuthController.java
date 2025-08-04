@@ -3,7 +3,6 @@ package com.khan.hospital_management.controller;
 import com.khan.hospital_management.dto.AuthResponse;
 import com.khan.hospital_management.dto.DoctorRegisterRequest;
 import com.khan.hospital_management.dto.LoginRequest;
-import com.khan.hospital_management.dto.RegisterRequest;
 import com.khan.hospital_management.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +22,18 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
+    @PostMapping("/register/admin")
+    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
+        return ResponseEntity.ok(authenticationService.registerAdmin(registerRequest));
+    }
+
     @PostMapping("/register/doctor")
     public ResponseEntity<AuthResponse> registerDoctor(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
         return ResponseEntity.ok(authenticationService.registerDoctor(registerRequest));
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest registerRequest) {
-//        return ResponseEntity.ok(authenticationService.register(registerRequest));
-//    }
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-//        return ResponseEntity.ok(authenticationService.login(request));
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authenticationService.login(request));
+    }
 }

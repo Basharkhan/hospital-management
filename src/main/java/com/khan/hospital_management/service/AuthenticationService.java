@@ -21,6 +21,40 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     @Transactional
+    public AuthResponse registerAdmin(DoctorRegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Doctor already exists");
+        }
+
+        // create user
+        User user = User.builder()
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.ADMIN)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        // save user
+        User savedUser = userRepository.save(user);
+
+        String token = jwtService.generateToken(savedUser);
+
+        UserDetailsDto userDetailsDto = UserDetailsDto.builder()
+                .email(savedUser.getEmail())
+                .fullName(savedUser.getFullName())
+                .role(savedUser.getRole())
+                .build();
+
+        return AuthResponse.builder()
+                .token(token)
+                .message("Admin registered successfully!")
+                .timestamp(LocalDateTime.now())
+                .userDetailsDto(userDetailsDto)
+                .build();
+    }
+
+    @Transactional
     public AuthResponse registerDoctor(DoctorRegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("User already exists");
@@ -66,29 +100,27 @@ public class AuthenticationService {
                 .build();
     }
 
-//    public AuthResponse register(RegisterRequest registerRequest) {
-//        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-//            throw new RuntimeException("User already exists");
-//        }
-//
-//        var user = User.builder()
-//                .fullName(registerRequest.getFullName())
-//                .email(registerRequest.getEmail())
-//                .password(passwordEncoder.encode(registerRequest.getPassword()))
-//                .role(registerRequest.getRole())
-//                .build();
-//        userRepository.save(user);
-//        String token = jwtService.generateToken(user);
-//        return new AuthResponse(token);
-//    }
-//
-//    public AuthResponse login(LoginRequest loginRequest) {
-//        User user = userRepository.findByEmail(loginRequest.getEmail())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-//            throw new RuntimeException("Invalid credentials");
-//        }
-//        String token = jwtService.generateToken(user);
-//        return new AuthResponse(token);
-//    }
+    public AuthResponse login(LoginRequest loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        String token = jwtService.generateToken(user);
+
+        UserDetailsDto userDetailsDto = UserDetailsDto.builder()
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .build();
+
+        return AuthResponse.builder()
+                .token(token)
+                .message("Login successful")
+                .timestamp(LocalDateTime.now())
+                .userDetailsDto(userDetailsDto)
+                .build();
+    }
 }
