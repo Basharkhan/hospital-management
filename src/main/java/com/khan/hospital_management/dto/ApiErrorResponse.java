@@ -1,4 +1,4 @@
-package com.khan.hospital_management.dto.response;
+package com.khan.hospital_management.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,39 +1,72 @@
 package com.khan.hospital_management.controller;
 
-import com.khan.hospital_management.dto.AuthResponse;
-import com.khan.hospital_management.dto.DoctorRegisterRequest;
-import com.khan.hospital_management.dto.LoginRequest;
+import com.khan.hospital_management.dto.*;
 import com.khan.hospital_management.service.AuthenticationService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
-@Validated
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationService authenticationService;
-
-    public AuthController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
+    private final Environment env;
 
     @PostMapping("/register/admin")
-    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
-        return ResponseEntity.ok(authenticationService.registerAdmin(registerRequest));
+    public ResponseEntity<ApiResponse<AuthResponse>> registerAdmin(@RequestHeader("X-SETUP-KEY") String setupKey,
+                                                                   @Valid @RequestBody RegisterRequest request) {
+        String expectedKey = env.getProperty("app.setup.key");
+
+        if (expectedKey == null || !expectedKey.equals(setupKey)) {
+            throw new AccessDeniedException("Access denied");
+        }
+
+        AuthResponse authResponse = authenticationService.registerAdmin(request);
+
+        ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Admin registered successfully",
+                authResponse,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(apiResponse);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/doctor")
-    public ResponseEntity<AuthResponse> registerDoctor(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
-        return ResponseEntity.ok(authenticationService.registerDoctor(registerRequest));
+    public ResponseEntity<ApiResponse<AuthResponse>> registerDoctor(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
+        AuthResponse authResponse = authenticationService.registerDoctor(registerRequest);
+
+        ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Doctor registered successfully",
+                authResponse,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authenticationService.login(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
+        AuthResponse authResponse = authenticationService.login(request);
+
+        ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Login successful",
+                authResponse,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(apiResponse);
     }
 }
