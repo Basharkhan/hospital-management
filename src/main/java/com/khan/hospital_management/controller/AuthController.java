@@ -56,6 +56,35 @@ public class AuthController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/register/employee")
+    public ResponseEntity<ApiResponse<AuthResponse>> registerEmployee(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse authResponse = authenticationService.registerEmployee(request);
+
+        ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Employee registered successfully",
+                authResponse,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @PostMapping("/register/patient")
+    public ResponseEntity<ApiResponse<AuthResponse>> registerPatient(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse authResponse = authenticationService.registerPatient(request);
+
+        ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Patient registered successfully",
+                authResponse,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
         AuthResponse authResponse = authenticationService.login(request);

@@ -47,7 +47,7 @@ public class AuthenticationService {
         Doctor doctor = Doctor.builder()
                 .specialization(request.getSpecialization())
                 .phone(request.getPhone())
-                .department(request.getDepartment())
+                // .department(request.getDepartment())
                 .qualification(request.getQualification())
                 .user(user) // <-- THIS IS IMPORTANT
                 .build();
@@ -70,6 +70,11 @@ public class AuthenticationService {
                 .token(token)
                 .userDetailsDto(userDetailsDto)
                 .build();
+    }
+
+    @Transactional
+    public AuthResponse registerEmployee(RegisterRequest request) {
+        return registerUser(request, Role.EMPLOYEE);
     }
 
     @Transactional
