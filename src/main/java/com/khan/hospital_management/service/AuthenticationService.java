@@ -28,49 +28,48 @@ public class AuthenticationService {
         return registerUser(request, Role.ADMIN);
     }
 
-    @Transactional
-    public AuthResponse registerDoctor(DoctorRegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
-        }
-
-        // create user
-        User user = User.builder()
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.DOCTOR)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        // create doctor profile
-        Doctor doctor = Doctor.builder()
-                .specialization(request.getSpecialization())
-                .phone(request.getPhone())
-                // .department(request.getDepartment())
-                .qualification(request.getQualification())
-                .user(user) // <-- THIS IS IMPORTANT
-                .build();
-
-        // link doctor to user
-        user.setDoctor(doctor);
-
-        // save doctor
-        User savedUser = userRepository.save(user);
-
-        String token = jwtService.generateToken(savedUser);
-
-        UserDetailsDto userDetailsDto = UserDetailsDto.builder()
-                .email(savedUser.getEmail())
-                .fullName(savedUser.getFullName())
-                .role(savedUser.getRole())
-                .build();
-
-        return AuthResponse.builder()
-                .token(token)
-                .userDetailsDto(userDetailsDto)
-                .build();
-    }
+//    @Transactional
+//    public AuthResponse registerDoctor(DoctorRegisterRequest request) {
+//        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+//            throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
+//        }
+//
+//        // create user
+//        User user = User.builder()
+//                .fullName(request.getFullName())
+//                .email(request.getEmail())
+//                .password(passwordEncoder.encode(request.getPassword()))
+//                .role(Role.DOCTOR)
+//                .build();
+//
+//        // create doctor profile
+//        Doctor doctor = Doctor.builder()
+//                .specialization(request.getSpecialization())
+//                .phone(request.getPhone())
+//                .department(request.getDepartment())
+//                .qualification(request.getQualification())
+//                .user(user) // <-- THIS IS IMPORTANT
+//                .build();
+//
+//        // link doctor to user
+//        user.setDoctor(doctor);
+//
+//        // save doctor
+//        User savedUser = userRepository.save(user);
+//
+//        String token = jwtService.generateToken(savedUser);
+//
+//        UserDetailsDto userDetailsDto = UserDetailsDto.builder()
+//                .email(savedUser.getEmail())
+//                .fullName(savedUser.getFullName())
+//                .role(savedUser.getRole())
+//                .build();
+//
+//        return AuthResponse.builder()
+//                .token(token)
+//                .userDetailsDto(userDetailsDto)
+//                .build();
+//    }
 
     @Transactional
     public AuthResponse registerEmployee(RegisterRequest request) {
@@ -94,6 +93,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         // save user

@@ -17,30 +17,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class DoctorService {
     private final DoctorRepository doctorRepository;
 
-    @Transactional(readOnly = true)
-    public Page<DoctorDto> findDoctorsByPage(Pageable pageable) {
-        return doctorRepository.findAllByActiveTrue(pageable)
-                .map(this::toDto);
-    }
+//    @Transactional(readOnly = true)
+//    public Page<DoctorDto> findDoctorsByPage(Pageable pageable) {
+//        return doctorRepository.findAllByActiveTrue(pageable)
+//                .map(this::toDto);
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public DoctorDto findDoctorById(Long id) {
+//        return doctorRepository.findById(id)
+//                .map(this::toDto)
+//                .orElseThrow(() -> new ResourceNotFoundException("Doctor with ID " + id + " not found"));
+//    }
 
-    @Transactional(readOnly = true)
-    public DoctorDto findDoctorById(Long id) {
-        return doctorRepository.findById(id)
-                .map(this::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor with ID " + id + " not found"));
-    }
-
-    public DoctorDto updateDoctor(Long id, DoctorUpdateRequest  request) {
-        Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor with ID " + id + " not found"));
-
-        doctor.setSpecialization(request.getSpecialization());
-        doctor.setPhone(request.getPhone());
-        // doctor.setDepartment(request.getDepartment());
-        doctor.setQualification(request.getQualification());
-
-        return toDto(doctorRepository.save(doctor));
-    }
+//    public DoctorDto updateDoctor(Long id, DoctorUpdateRequest  request) {
+//        Doctor doctor = doctorRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Doctor with ID " + id + " not found"));
+//
+//        doctor.setSpecialization(request.getSpecialization());
+//        doctor.setPhone(request.getPhone());
+//        // doctor.setDepartment(request.getDepartment());
+//        doctor.setQualification(request.getQualification());
+//
+//        return toDto(doctorRepository.save(doctor));
+//    }
 
     public void deleteDoctor(Long id) {
         Doctor doctor = doctorRepository.findById(id)
@@ -50,15 +50,15 @@ public class DoctorService {
         doctorRepository.save(doctor);
     }
 
-    private DoctorDto toDto(Doctor doctor) {
-        return DoctorDto.builder()
-                .id(doctor.getId())
-                .fullName(doctor.getUser().getFullName())
-                .email(doctor.getUser().getEmail())
-                .specialization(doctor.getSpecialization())
-                .phone(doctor.getPhone())
-                // .department(doctor.getDepartment())
-                .qualification(doctor.getQualification())
-                .build();
-    }
+//    private DoctorDto toDto(Doctor doctor) {
+//        return DoctorDto.builder()
+//                .id(doctor.getId())
+//                .fullName(doctor.getUser().getFullName())
+//                .email(doctor.getUser().getEmail())
+//                .specialization(doctor.getSpecialization())
+//                .phone(doctor.getPhone())
+//                // .department(doctor.getDepartment())
+//                .qualification(doctor.getQualification())
+//                .build();
+//    }
 }

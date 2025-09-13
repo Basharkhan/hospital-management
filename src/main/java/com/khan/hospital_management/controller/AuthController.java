@@ -41,7 +41,7 @@ public class AuthController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    /*@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/doctor")
     public ResponseEntity<ApiResponse<AuthResponse>> registerDoctor(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
         AuthResponse authResponse = authenticationService.registerDoctor(registerRequest);
@@ -54,7 +54,7 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(apiResponse);
-    }
+    }*/
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/employee")

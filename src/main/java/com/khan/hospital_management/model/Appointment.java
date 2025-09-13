@@ -15,37 +15,33 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "appointments")
 public class Appointment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private LocalDateTime appointmentDateTime;
+    private LocalDateTime appointmentDate;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
 
-    @Column(length = 500)
-    private String reason;
-
-    @Column(length = 500)
-    private String notes;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pateint_id", nullable = false)
-    private Patient patient;
+    private String reason; // optional note from patient
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private MedicalRecord medicalRecord;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
 
-    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private Bill bill;
+
+    @Builder.Default
+    private boolean active = true;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 }

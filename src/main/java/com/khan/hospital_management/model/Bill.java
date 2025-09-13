@@ -15,34 +15,14 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "bills")
 public class Bill {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime billDate;
+    private Double amount;
 
-    @Column(nullable = false)
-    private String billNumber;
-
-    @Column(nullable = false)
-    private Double consultationFee;
-
-    @Column(nullable = false)
-    private Double medicationFee;
-
-    @Column(nullable = false)
-    private Double roomCharges;
-
-    @Column(nullable = false)
-    private Double totalAmount;
-
-    @Column(nullable = false)
-    private Double paidAmount;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
@@ -51,4 +31,13 @@ public class Bill {
     @OneToOne
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
+
+    @Builder.Default
+    private boolean active = true;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 }
