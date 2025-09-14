@@ -12,5 +12,5 @@ public class DoctorDto {
     private String specialization;
     private String phone;
     private String department;
-    private String qualification;
+    private String roomNumber;
 }

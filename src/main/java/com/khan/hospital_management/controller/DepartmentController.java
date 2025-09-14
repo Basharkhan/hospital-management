@@ -53,12 +53,31 @@ public class DepartmentController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Page<DepartmentDto>>> getDoctorsByPage(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-        Page<DepartmentDto> department = departmentService.getDepartments(pageable);
+    public ResponseEntity<ApiResponse<Page<DepartmentDto>>> getAllDepartments(
+            @PageableDefault(size = 10, page = 0)
+            Pageable pageable) {
+        Page<DepartmentDto> department = departmentService.getAllDepartments(pageable);
 
         ApiResponse<Page<DepartmentDto>> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
-                "Department retrieved successfully",
+                "Departments retrieved successfully",
+                department,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/active")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<DepartmentDto>>> getAllActiveDepartments(
+            @PageableDefault(size = 10, page = 0)
+            Pageable pageable) {
+        Page<DepartmentDto> department = departmentService.getAllActiveDepartments(pageable);
+
+        ApiResponse<Page<DepartmentDto>> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Active departments retrieved successfully",
                 department,
                 LocalDateTime.now()
         );
@@ -68,13 +87,90 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<DepartmentDto>> getDepartment(@PathVariable Long id) {
-        var department = departmentService.getDepartment(id);
+    public ResponseEntity<ApiResponse<DepartmentDto>> getDepartmentById(@PathVariable Long id) {
+        var department = departmentService.getDepartmentById(id);
 
         ApiResponse<DepartmentDto> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Department retrieved successfully",
                 department,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{departmentId}/doctors/{doctorId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> assignDoctorToDepartment(@PathVariable Long departmentId,
+                                                                      @PathVariable Long doctorId) {
+        departmentService.assignDoctorToDepartment(departmentId, doctorId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Doctor assigned to department successfully",
+                null,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{departmentId}/{doctorId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> removeDoctorFromDepartment(@PathVariable Long departmentId,
+                                                                        @PathVariable Long doctorId) {
+        departmentService.removeDoctorFromDepartment(departmentId, doctorId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Doctor removed from department successfully",
+                null,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteDepartmentById(@PathVariable Long id) {
+        departmentService.deleteDepartmentById(id);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Department deleted successfully",
+                null,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deactivateDepartment(@PathVariable Long id) {
+        departmentService.deactivateDepartment(id);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Department deactivated successfully",
+                null,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> activateDepartment(@PathVariable Long id) {
+        departmentService.activateDepartment(id);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Department activated successfully",
+                null,
                 LocalDateTime.now()
         );
 

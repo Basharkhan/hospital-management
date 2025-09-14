@@ -1,13 +1,12 @@
 package com.khan.hospital_management.repository;
 
-import com.khan.hospital_management.model.Department;
+import com.khan.hospital_management.model.Patient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DepartmentRepository extends JpaRepository<Department, Long> {
-    boolean existsByName(String name);
-    Page<Department> findAllByActiveTrue(Pageable pageable);
+public interface PatientRepository extends JpaRepository<Patient, Long> {
+    Page<Patient> findByActiveTrue(Pageable pageable);
 }

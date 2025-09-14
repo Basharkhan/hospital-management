@@ -41,7 +41,7 @@ public class AuthController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    /*@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/doctor")
     public ResponseEntity<ApiResponse<AuthResponse>> registerDoctor(@Valid @RequestBody DoctorRegisterRequest registerRequest) {
         AuthResponse authResponse = authenticationService.registerDoctor(registerRequest);
@@ -54,7 +54,7 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(apiResponse);
-    }*/
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/employee")
@@ -72,7 +72,7 @@ public class AuthController {
     }
 
     @PostMapping("/register/patient")
-    public ResponseEntity<ApiResponse<AuthResponse>> registerPatient(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> registerPatient(@Valid @RequestBody PatientRegisterRequest request) {
         AuthResponse authResponse = authenticationService.registerPatient(request);
 
         ApiResponse<AuthResponse> apiResponse = new ApiResponse<>(
