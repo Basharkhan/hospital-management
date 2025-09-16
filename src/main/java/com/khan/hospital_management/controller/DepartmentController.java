@@ -100,7 +100,7 @@ public class DepartmentController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{departmentId}/doctors/{doctorId}")
+    @PatchMapping("/{departmentId}/doctors/{doctorId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> assignDoctorToDepartment(@PathVariable Long departmentId,
                                                                       @PathVariable Long doctorId) {
@@ -116,7 +116,7 @@ public class DepartmentController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{departmentId}/{doctorId}")
+    @DeleteMapping("/{departmentId}/doctors/{doctorId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> removeDoctorFromDepartment(@PathVariable Long departmentId,
                                                                         @PathVariable Long doctorId) {

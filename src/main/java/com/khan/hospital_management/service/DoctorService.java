@@ -33,6 +33,11 @@ public class DoctorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor with ID " + id + " not found"));
     }
 
+    public Page<DoctorDto> getDoctorsByDepartmentId(Pageable pageable, Long departmentId) {
+        Page<Doctor> doctors = doctorRepository.findAllByDepartmentId(pageable, departmentId);
+        return doctors.map(this::mapToDto);
+    }
+
     public DoctorDto updateDoctor(Long id, DoctorUpdateRequest  request) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor with ID " + id + " not found"));

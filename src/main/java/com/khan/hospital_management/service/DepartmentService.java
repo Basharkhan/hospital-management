@@ -99,6 +99,7 @@ public class DepartmentService {
                     .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + doctorId));
 
         department.getDoctors().add(doctor);
+        // System.out.println(department);
         departmentRepository.save(department);
     }
 

@@ -36,6 +36,22 @@ public class DoctorController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/departments/{departmentId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<DoctorDto>>> getDoctorsByDepartmentId(
+            @PageableDefault(size = 10, page = 0) Pageable pageable, @PathVariable Long departmentId) {
+        Page<DoctorDto> doctors = doctorService.getDoctorsByDepartmentId(pageable, departmentId);
+
+        ApiResponse<Page<DoctorDto>> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Doctors retrieved by department id successfully",
+                doctors,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<DoctorDto>> getDoctorById(@PathVariable Long id) {
