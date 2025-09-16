@@ -39,7 +39,7 @@ public class PatientController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping()
+    @GetMapping("/active")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<PatientDto>>> getAllActivePatients(
             @PageableDefault(size = 10, page = 0)
@@ -56,7 +56,7 @@ public class PatientController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/active")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<PatientDto>>> getAllPatients(
             @PageableDefault(size = 10, page = 0)

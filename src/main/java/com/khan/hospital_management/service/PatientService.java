@@ -75,7 +75,9 @@ public class PatientService {
     private PatientDto mapToDto(Patient patient) {
         return PatientDto.builder()
                 .id(patient.getId())
+                .fullName(patient.getUser().getFullName())
                 .phone(patient.getPhone())
+                .address(patient.getAddress())
                 .dateOfBirth(patient.getDateOfBirth())
                 .active(patient.isActive())
                 .createdAt(patient.getCreatedAt())

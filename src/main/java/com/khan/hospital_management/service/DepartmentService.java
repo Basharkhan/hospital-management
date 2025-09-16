@@ -98,20 +98,19 @@ public class DepartmentService {
         Doctor doctor = doctorRepository.findById(doctorId)
                     .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + doctorId));
 
-        department.getDoctors().add(doctor);
-        // System.out.println(department);
-        departmentRepository.save(department);
+        doctor.setDepartment(department);
+        doctorRepository.save(doctor);
     }
 
     public void removeDoctorFromDepartment(Long departmentId, Long doctorId) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + departmentId));
-
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + doctorId));
 
-        department.getDoctors().remove(doctor);
-        departmentRepository.save(department);
+        if (doctor.getDepartment() != null && doctor.getDepartment().getId().equals(departmentId)) {
+            doctor.setDepartment(null);
+        }
+
+        doctorRepository.save(doctor);
     }
 
     private DepartmentDto mapToDto(Department department) {
