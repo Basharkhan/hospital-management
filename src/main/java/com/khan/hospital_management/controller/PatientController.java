@@ -105,7 +105,7 @@ public class PatientController {
 
     @PatchMapping("/{id}/activate")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> activateDepartment(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> activatePatient(@PathVariable Long id) {
         patientService.activatePatient(id);
 
         ApiResponse<Void> response = new ApiResponse<>(

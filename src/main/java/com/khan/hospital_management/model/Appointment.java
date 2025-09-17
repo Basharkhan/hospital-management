@@ -1,27 +1,25 @@
 package com.khan.hospital_management.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Table(name = "appointments")
-public class Appointment {
+public class Appointment extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDateTime appointmentDate;
 
     @Enumerated(EnumType.STRING)
-    private AppointmentStatus status;
+    private AppointmentStatus appointmentStatus;
 
     private String reason; // optional note from patient
 
@@ -35,13 +33,4 @@ public class Appointment {
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private Bill bill;
-
-    @Builder.Default
-    private boolean active = true;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 }
