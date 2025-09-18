@@ -1,8 +1,10 @@
 package com.khan.hospital_management.controller;
 
 import com.khan.hospital_management.dto.ApiResponse;
+import com.khan.hospital_management.dto.AppointmentDto;
 import com.khan.hospital_management.dto.DoctorDto;
 import com.khan.hospital_management.dto.DoctorUpdateRequest;
+import com.khan.hospital_management.service.AppointmentService;
 import com.khan.hospital_management.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class DoctorController {
     private final DoctorService doctorService;
+    private final AppointmentService appointmentService;
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
@@ -46,6 +49,22 @@ public class DoctorController {
                 HttpStatus.OK.value(),
                 "Doctors retrieved by department id successfully",
                 doctors,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{doctorId}/appointments")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<AppointmentDto>>> getAppointmentsByDoctor(@PathVariable Long doctorId,
+                                                                                     Pageable pageable) {
+        Page<AppointmentDto> appointments = appointmentService.getAppointmentsByDoctor(doctorId, pageable);
+
+        ApiResponse<Page<AppointmentDto>> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Appointments by doctor retrieved successfully",
+                appointments,
                 LocalDateTime.now()
         );
 

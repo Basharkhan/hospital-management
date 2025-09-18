@@ -34,7 +34,7 @@ public class AppointmentService {
 
         Appointment appointment = Appointment.builder()
                 .appointmentDate(request.getAppointmentDate())
-                .appointmentStatus(request.getAppointmentStatus())
+                .appointmentStatus(AppointmentStatus.PENDING)
                 .reason(request.getReason())
                 .doctor(doctor)
                 .patient(patient)
@@ -53,7 +53,7 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AppointmentDto> getAppointsForDoctor(Long doctorId, Pageable pageable) {
+    public Page<AppointmentDto> getAppointmentsByDoctor(Long doctorId, Pageable pageable) {
         Page<Appointment> appointments = appointmentRepository.findAllByDoctorId(doctorId, pageable);
         return appointments.map(this::mapToDto);
     }
@@ -63,7 +63,6 @@ public class AppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
 
         appointment.setAppointmentDate(request.getAppointmentDate());
-        appointment.setAppointmentStatus(request.getAppointmentStatus());
         appointment.setReason(request.getReason());
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
@@ -71,11 +70,31 @@ public class AppointmentService {
         return mapToDto(updatedAppointment);
     }
 
-    public void cancelAppointment(Long id) {
-        Appointment appointment =  appointmentRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
-        appointment.setAppointmentStatus(AppointmentStatus.CANCELLED);
+    public AppointmentDto confirmAppointment(Long id) {
+        Appointment appointment = findAppointment(id);
+
+        appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
         appointmentRepository.save(appointment);
+
+        return mapToDto(appointment);
+    }
+
+    public AppointmentDto cancelAppointment(Long id) {
+        Appointment appointment = findAppointment(id);
+        appointment.setAppointmentStatus(AppointmentStatus.CANCELLED);
+        return mapToDto(appointmentRepository.save(appointment));
+    }
+
+    public AppointmentDto completeAppointment(Long id) {
+        Appointment appointment = findAppointment(id);
+        appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
+        return mapToDto(appointmentRepository.save(appointment));
+    }
+
+    public Appointment findAppointment(Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
+        return appointment;
     }
 
     private AppointmentDto mapToDto(Appointment appointment) {

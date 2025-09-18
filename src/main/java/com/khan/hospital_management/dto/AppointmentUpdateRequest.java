@@ -11,10 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class AppointmentUpdateRequest {
-    @NotBlank(message = "Appoint date is required")
+    @NotNull(message = "Appoint date is required")
     private LocalDateTime appointmentDate;
-
-    @NotBlank(message = "Appoint status is required")
-    private AppointmentStatus appointmentStatus;
     private String reason;
 }
