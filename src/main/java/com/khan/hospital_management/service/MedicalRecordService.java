@@ -2,6 +2,7 @@ package com.khan.hospital_management.service;
 
 import com.khan.hospital_management.dto.MedicalRecordDto;
 import com.khan.hospital_management.dto.MedicalRecordRequest;
+import com.khan.hospital_management.dto.MedicalRecordUpdateRequest;
 import com.khan.hospital_management.exception.InvalidAppointmentException;
 import com.khan.hospital_management.exception.ResourceNotFoundException;
 import com.khan.hospital_management.model.*;
@@ -65,7 +66,7 @@ public class MedicalRecordService {
         return medicalRecords.map(this::mapToDto);
     }
 
-    public MedicalRecordDto updateRecord(Long id, MedicalRecordRequest request) {
+    public MedicalRecordDto updateRecord(Long id, MedicalRecordUpdateRequest request) {
         MedicalRecord record = medicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Record not found with id: " + id));
 
@@ -89,7 +90,9 @@ public class MedicalRecordService {
                 .treatment(record.getTreatment())
                 .notes(record.getNotes())
                 .doctorId(record.getDoctor().getId())
+                .doctorName(record.getDoctor().getUser().getFullName())
                 .patientId(record.getPatient().getId())
+                .patientName(record.getPatient().getUser().getFullName())
                 .appointmentId(record.getAppointment().getId())
                 .build();
     }

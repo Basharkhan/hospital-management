@@ -13,6 +13,5 @@ public class MedicalRecordUpdateRequest {
 
     @NotBlank(message = "Treatment is required")
     private String treatment;
-
     private String notes;
 }

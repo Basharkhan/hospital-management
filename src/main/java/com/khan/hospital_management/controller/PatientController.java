@@ -1,9 +1,7 @@
 package com.khan.hospital_management.controller;
 
-import com.khan.hospital_management.dto.ApiResponse;
-import com.khan.hospital_management.dto.DepartmentDto;
-import com.khan.hospital_management.dto.PatientDto;
-import com.khan.hospital_management.dto.PatientUpdateRequest;
+import com.khan.hospital_management.dto.*;
+import com.khan.hospital_management.service.MedicalRecordService;
 import com.khan.hospital_management.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PatientController {
     private  final PatientService patientService;
+    private final MedicalRecordService medicalRecordService;
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -127,6 +126,24 @@ public class PatientController {
                 HttpStatus.OK.value(),
                 "Patient deleted successfully",
                 null,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/records")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<MedicalRecordDto>>> getMedicalRecordsByPatientId(
+            @PathVariable Long id,
+            @PageableDefault(size = 10, page = 0)
+            Pageable pageable) {
+        Page<MedicalRecordDto> record = medicalRecordService.getMedicalRecordsByPatientId(id, pageable);
+
+        ApiResponse<Page<MedicalRecordDto>> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Medical records by patient retrieved successfully",
+                record,
                 LocalDateTime.now()
         );
 

@@ -11,6 +11,8 @@ public class MedicalRecordDto {
     private String treatment;
     private String notes;
     private Long doctorId;
+    private String doctorName;
     private Long patientId;
+    private String patientName;
     private Long appointmentId;
 }
