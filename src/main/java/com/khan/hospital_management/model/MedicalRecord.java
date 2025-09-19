@@ -6,20 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "medical_records")
-public class MedicalRecord {
+public class MedicalRecord extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private LocalDateTime recordDate;
 
     @Column(columnDefinition = "TEXT")
     private String diagnosis;
@@ -38,16 +34,7 @@ public class MedicalRecord {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    @OneToOne
-    @JoinColumn(name = "appointment_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
-
-    @Builder.Default
-    private boolean active = true;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 }

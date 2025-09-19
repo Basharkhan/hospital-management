@@ -23,6 +23,11 @@ public class GlobalExceptionHandler {
         return buildResponse(ex, HttpStatus.CONFLICT, request); // 409
     }
 
+    @ExceptionHandler(InvalidAppointmentException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidAppointmentException(InvalidAppointmentException ex, HttpServletRequest request) {
+        return buildResponse(ex, HttpStatus.BAD_REQUEST, request); // 400
+    }
+
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ApiErrorResponse> handleUserExists(UserAlreadyExistsException ex, HttpServletRequest request) {
         return buildResponse(ex, HttpStatus.CONFLICT, request); // 409
