@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "prescription_item")
+@Table(name = "prescription_items")
 public class PrescriptionItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,6 @@ public class PrescriptionItem {
     private String instructions;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medical_record_id", nullable = false)
+    @JoinColumn(name = "prescription_id", nullable = false)
     private Prescription prescription;
 }

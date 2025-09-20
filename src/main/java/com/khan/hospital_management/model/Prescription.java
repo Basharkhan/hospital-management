@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "users")
+@Table(name = "prescriptions")
 public class Prescription extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
