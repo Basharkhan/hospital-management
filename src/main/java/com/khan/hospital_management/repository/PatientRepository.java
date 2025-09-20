@@ -6,7 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
     Page<Patient> findByActiveTrue(Pageable pageable);
+    Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }
